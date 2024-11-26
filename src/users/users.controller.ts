@@ -1,26 +1,15 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from '../schemas/user.schema';
-import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
-import { Types } from 'mongoose';
 
-@Controller('users')
+@Controller('auth')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  async findAll(): Promise<User[]> {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id', ParseObjectIdPipe) id: string): Promise<User> {
-    return this.usersService.findOne(id);
+  @Post('signup')
+  async signup(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+    const user = await this.usersService.signup(createUserDto);
+    const { password, __v, ...result } = user.toObject();
+    return result;
   }
 } 

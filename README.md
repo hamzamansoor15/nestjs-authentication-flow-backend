@@ -1,99 +1,261 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Authentication API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Features
+- User Registration (Signup) with validation
+  - Name validation (minimum 2 characters)
+  - Email validation (unique emails only)
+  - Password validation (minimum 8 characters, requires letter, number, and special character)
+- User Authentication (Login)
+  - JWT-based authentication
+  - Secure password hashing using bcrypt
+  - Token-based session management
+- Environment Configuration
+  - Configurable JWT secret and expiration
+  - MongoDB connection string
+  - Port configuration
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Prerequisites
 
-## Description
+### 1. Node.js and npm (using NVM)
+NVM (Node Version Manager) is recommended for installing and managing Node.js versions.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+#### Install NVM
 
 ```bash
-$ npm install
+# For Linux/macOS
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# OR using wget
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ```
 
-## Compile and run the project
-
+Add these lines to your ~/.bashrc, ~/.zshrc, or ~/.profile:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 ```
 
-## Run tests
-
+#### Verify NVM Installation
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Restart your terminal and run
+nvm --version
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+#### Install Node.js using NVM
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Install the LTS version of Node.js
+nvm install --lts
+
+# OR install a specific version
+nvm install 18.17.0
+
+# Set default Node.js version
+nvm alias default 18.17.0
+
+# Verify installation
+node --version
+npm --version
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+#### Switch Node.js Versions (when needed)
+```bash
+# List installed versions
+nvm ls
 
-## Resources
+# List available versions
+nvm ls-remote
 
-Check out a few resources that may come in handy when working with NestJS:
+# Use a specific version
+nvm use 18.17.0
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 2. MongoDB
+Install MongoDB Community Edition:
+```bash
+# For Ubuntu/Debian
+wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+sudo apt-get update
+sudo apt-get install -y mongodb-org
 
-## Support
+# Start MongoDB
+sudo systemctl start mongod
+sudo systemctl enable mongod
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# For macOS using Homebrew
+brew tap mongodb/brew
+brew install mongodb-community
+brew services start mongodb-community
 
-## Stay in touch
+# Verify installation
+mongod --version
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 3. Development Tools
+```bash
+# Install NestJS CLI globally
+npm install -g @nestjs/cli
 
-## License
+# Verify installation
+nest --version
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Environment Setup
+1. Create a `.env` file in the root directory:
+```bash
+touch .env
+```
+
+2. Add the following configuration to `.env`:
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/your-database
+JWT_SECRET=your-super-secret-key
+NODE_ENV=development
+```
+
+## Installation
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd <project-directory>
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+## Development
+Start the development server with hot-reload:
+```bash
+npm run start:dev
+```
+The API will be available at `http://localhost:3000`
+
+## Production Build
+1. Build the application:
+```bash
+npm run build
+```
+
+2. Start the production server:
+```bash
+npm run start:prod
+```
+
+## API Documentation
+
+### Authentication Endpoints
+
+#### Register a new user
+```http
+POST /auth/signup
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "Password123!"
+}
+```
+
+Response:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+#### Login
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "Password123!"
+}
+```
+
+Response:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Using JWT Token
+For protected routes, include the token in the Authorization header:
+```http
+GET /protected-route
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+## Testing
+```bash
+# Run unit tests
+npm run test
+
+# Run e2e tests
+npm run test:e2e
+
+# Generate test coverage
+npm run test:cov
+```
+
+## Project Structure
+```
+src/
+├── auth/                  # Authentication module
+│   ├── guards/           # JWT guards
+│   ├── interfaces/       # TypeScript interfaces
+│   └── strategies/       # Passport strategies
+├── users/                # Users module
+│   ├── dto/             # Data Transfer Objects
+│   └── schemas/         # MongoDB schemas
+├── config/              # Configuration
+└── types/               # TypeScript types
+```
+
+## Error Handling
+The API handles various error scenarios:
+- 400: Bad Request (Invalid input)
+- 401: Unauthorized (Invalid credentials)
+- 409: Conflict (Email already exists)
+- 500: Internal Server Error
+
+## Security Features
+- Password hashing using bcrypt
+- JWT token authentication
+- Email uniqueness validation
+- Input validation using class-validator
+- Environment variable configuration
+- MongoDB injection protection
+
+## Troubleshooting
+
+### Common Issues
+1. MongoDB Connection Error
+```bash
+# Check if MongoDB is running
+sudo systemctl status mongod
+
+# Restart MongoDB
+sudo systemctl restart mongod
+```
+
+2. Port Already in Use
+```bash
+# Find process using port 3000
+lsof -i :3000
+# Kill the process
+kill -9 <PID>
+```
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request

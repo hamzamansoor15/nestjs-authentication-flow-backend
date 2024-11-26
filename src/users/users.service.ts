@@ -43,6 +43,11 @@ export class UsersService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    return this.authService.generateToken(user);
+    let data = {data:{
+      access_token: await this.authService.generateToken(user),
+      user}
+    };
+    console.log(data);
+    return data;
   }
 } 

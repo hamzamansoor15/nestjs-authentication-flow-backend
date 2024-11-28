@@ -11,12 +11,14 @@ import { LoginDto } from './dto/login.dto';
 import { User } from '../schemas/user.schema';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import * as bcrypt from 'bcrypt';
+import { TokenBlacklistService } from './token-blacklist/token-blacklist.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   async signup(createUserDto: CreateUserDto): Promise<AuthResponse> {
@@ -83,6 +85,20 @@ export class AuthService {
         throw error;
       }
       throw new InternalServerErrorException('Error during login');
+    }
+  }
+
+  async logout(token: string): Promise<void> {
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
+    }
+    
+    try {
+      // Verify the token is valid before blacklisting
+      await this.jwtService.verifyAsync(token);
+      this.tokenBlacklistService.addToBlacklist(token);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
     }
   }
 

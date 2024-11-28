@@ -11,45 +11,19 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private authService: AuthService,
   ) {}
 
-  async signup(createUserDto: CreateUserDto) {
-    const { email, password } = createUserDto;
-    const existingUser = await this.userModel.findOne({ email }).exec();
-    if (existingUser) {
-      throw new ConflictException('Email already exists');
-    }
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const createdUser = new this.userModel({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-    const savedUser = await createdUser.save();
-    return this.authService.generateToken(savedUser);
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const createdUser = new this.userModel(createUserDto);
+    return createdUser.save();
   }
 
-  async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
-    const user = await this.userModel.findOne({ email }).exec();
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userModel.findOne({ email }).exec();
+  }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    let data = {
-      data: {
-        access_token: await this.authService.generateToken(user),
-        user,
-      },
-    };
-    return data;
+  async findById(id: string): Promise<User | null> {
+    return this.userModel.findById(id).select('-password').exec();
   }
 
   async getProfile(userId: string) {
@@ -61,7 +35,7 @@ export class UsersService {
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-    
+
     return user;
   }
-} 
+}

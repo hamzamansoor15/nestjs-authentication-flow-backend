@@ -9,17 +9,6 @@ import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.i
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // Public Routes
-  @Post('signup')
-  async signup(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    return this.usersService.signup(createUserDto);
-  }
-
-  @Post('login')
-  async login(@Body(ValidationPipe) loginDto: LoginDto) {
-    return this.usersService.login(loginDto);
-  }
-
   // Protected Routes
   @UseGuards(JwtAuthGuard)
   @Get('profile')

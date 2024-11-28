@@ -43,11 +43,25 @@ export class UsersService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    let data = {data:{
-      access_token: await this.authService.generateToken(user),
-      user}
+    let data = {
+      data: {
+        access_token: await this.authService.generateToken(user),
+        user,
+      },
     };
-    console.log(data);
     return data;
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.userModel
+      .findById(userId)
+      .select('-password -__v')
+      .exec();
+    
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    
+    return user;
   }
 } 

@@ -192,6 +192,37 @@ GET /protected-route
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
+#### Get Profile
+```http
+GET /users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+Response:
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+```
+```
+
+Now all routes in the ProtectedController will require a valid JWT token. To test:
+
+1. First, login to get a token
+2. Use the token in subsequent requests to protected routes
+3. Without a valid token, you'll get a 401 Unauthorized response
+
+The JwtAuthGuard can be used on:
+- Individual routes using `@UseGuards(JwtAuthGuard)`
+- Entire controllers using `@UseGuards(JwtAuthGuard)` at controller level
+- Globally for all routes (not recommended) by adding it to main.ts
+
+Remember to always include the token in the Authorization header:
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
 ## Testing
 ```bash
 # Run unit tests

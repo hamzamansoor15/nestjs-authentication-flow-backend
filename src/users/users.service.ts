@@ -36,6 +36,6 @@ export class UsersService {
       throw new UnauthorizedException('User not found');
     }
 
-    return user;
+    return {data:user};
   }
 }

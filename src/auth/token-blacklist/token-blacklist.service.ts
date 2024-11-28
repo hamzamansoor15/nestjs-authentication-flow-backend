@@ -11,9 +11,13 @@ export class TokenBlacklistService {
   isBlacklisted(token: string): boolean {
     return this.blacklistedTokens.has(token);
   }
-
+  
   // Optional: Clean up expired tokens periodically
   removeFromBlacklist(token: string): void {
     this.blacklistedTokens.delete(token);
+  }
+
+  getBlacklistedTokens(): string[] {
+    return Array.from(this.blacklistedTokens);
   }
 }

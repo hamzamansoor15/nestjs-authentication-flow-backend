@@ -84,7 +84,7 @@ export class LoggingInterceptor implements NestInterceptor {
   private maskSensitiveData(data: any): any {
     if (!data) return data;
     
-    const sensitiveFields = ['password', 'token', 'authorization', 'credit_card'];
+    const sensitiveFields = ['password', 'token', 'authorization', 'credit_card', 'access_token'];
     const masked = { ...data };
 
     Object.keys(masked).forEach(key => {

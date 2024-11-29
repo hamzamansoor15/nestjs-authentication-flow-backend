@@ -146,82 +146,64 @@ npm run start:prod
 
 ## API Documentation
 
-### Authentication Endpoints
+The complete API documentation is available as a Postman collection. The collection includes:
 
-#### Register a new user
-```http
-POST /auth/signup
-Content-Type: application/json
+### Available Endpoints
+- Authentication
+  - POST /auth/signup
+  - POST /auth/login
+  - POST /auth/logout
+  - GET /auth/blacklisted-tokens
+- Users
+  - GET /users/profile
 
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "Password123!"
-}
-```
+### Using the Postman Collection
 
-Response:
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
+1. Import Collection and Environment:
+   - Download files:
+     - [NestJS-Auth-API.postman_collection.json](./postman/NestJS-Auth-API.postman_collection.json)
+     - [NestJS-Auth-API.postman_environment.json](./postman/NestJS-Auth-API.postman_environment.json)
+   - Open Postman
+   - Click "Import" button
+   - Select both downloaded files
 
-#### Login
-```http
-POST /auth/login
-Content-Type: application/json
+2. Set up environment:
+   - Select "NestJS Auth API - Local" environment from the dropdown
+   - Environment variables included:
+     - `baseUrl`: API base URL (default: http://localhost:8000)
+     - `authToken`: JWT token (automatically managed)
 
-{
-  "email": "john@example.com",
-  "password": "Password123!"
-}
-```
+3. Testing Flow:
+   - Use "Sign Up" to create a user
+   - Use "Login" to get a token (automatically saved)
+   - Access protected routes using the saved token
+   - Use "Logout" to invalidate token
 
-Response:
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
+### Environment Variables
 
-### Using JWT Token
-For protected routes, include the token in the Authorization header:
-```http
-GET /protected-route
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+#### Local Development
+PORT=8000
+MONGODB_URI=mongodb://localhost:27017/your-database
+JWT_SECRET=your-super-secret-key
+NODE_ENV=development
 
-#### Get Profile
-```http
-GET /users/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+### Input Validation Rules
 
-Response:
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com"
-}
-```
-```
+#### Password Requirements
+- Minimum 8 characters
+- At least 1 letter
+- At least 1 number
+- At least 1 special character (@$!%*#?&)
 
-Now all routes in the ProtectedController will require a valid JWT token. To test:
+#### Email Requirements
+- Must be a valid email format
+- Must be unique in the system
 
-1. First, login to get a token
-2. Use the token in subsequent requests to protected routes
-3. Without a valid token, you'll get a 401 Unauthorized response
+#### Name Requirements
+- Minimum 2 characters
+- Cannot be empty
 
-The JwtAuthGuard can be used on:
-- Individual routes using `@UseGuards(JwtAuthGuard)`
-- Entire controllers using `@UseGuards(JwtAuthGuard)` at controller level
-- Globally for all routes (not recommended) by adding it to main.ts
-
-Remember to always include the token in the Authorization header:
-```http
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
+For detailed request/response examples and testing, please refer to the Postman collection.
 
 ## Testing
 ```bash

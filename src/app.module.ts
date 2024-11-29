@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TokenBlacklistModule } from './auth/token-blacklist/token-blacklist.module';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { TokenBlacklistModule } from './auth/token-blacklist/token-blacklist.mod
     MongooseModule.forRoot(process.env.MONGODB_URI),
     TokenBlacklistModule,
     UsersModule,
-    AuthModule
+    AuthModule,
+    LoggingModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -12,6 +12,7 @@ import { User } from '../schemas/user.schema';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import * as bcrypt from 'bcrypt';
 import { TokenBlacklistService } from './token-blacklist/token-blacklist.service';
+import { CustomLogger } from '../logging/logger.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly tokenBlacklistService: TokenBlacklistService,
+    private readonly logger: CustomLogger,
   ) {}
 
   async signup(createUserDto: CreateUserDto): Promise<AuthResponse> {
@@ -57,9 +59,12 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<AuthResponse> {
     try {
+      this.logger.log(`Login attempt for user: ${loginDto.email}`, 'AuthService');
+      
       // Find user
       const user = await this.usersService.findByEmail(loginDto.email);
       if (!user) {
+        this.logger.warn(`Failed login attempt - user not found: ${loginDto.email}`, 'AuthService');
         throw new UnauthorizedException('Invalid credentials');
       }
 
@@ -74,6 +79,7 @@ export class AuthService {
 
       // Generate token and return response
       const access_token = await this.generateToken(user);
+      this.logger.log(`Successful login for user: ${loginDto.email}`, 'AuthService');
       return {
         data: {
           access_token,
@@ -81,6 +87,11 @@ export class AuthService {
         },
       };
     } catch (error) {
+      this.logger.error(
+        `Login error for user ${loginDto.email}: ${error.message}`,
+        error.stack,
+        'AuthService'
+      );
       if (error instanceof UnauthorizedException) {
         throw error;
       }

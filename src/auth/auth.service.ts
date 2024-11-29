@@ -10,7 +10,6 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { User } from '../schemas/user.schema';
 import { AuthResponse } from './interfaces/auth-response.interface';
-import * as bcrypt from 'bcrypt';
 import { TokenBlacklistService } from './token-blacklist/token-blacklist.service';
 import { CustomLogger } from '../logging/logger.service';
 
@@ -31,14 +30,11 @@ export class AuthService {
         throw new ConflictException('Email already exists');
       }
 
-      // Hash password
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
-
-      // Create user
+      // Password is already hashed from frontend, no need to hash it again
       const user = await this.usersService.create({
         ...createUserDto,
-        password: hashedPassword,
+        // Store the pre-hashed password directly
+        password: createUserDto.password,
       });
 
       // Generate token and return response
@@ -46,7 +42,7 @@ export class AuthService {
       return {
         data: {
           access_token,
-          user: user //this.excludePassword(user),
+          user: user
         },
       };
     } catch (error) {
@@ -68,12 +64,11 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      // Verify password
-      const isPasswordValid = await bcrypt.compare(
-        loginDto.password,
-        user.password
-      );
+      // Direct comparison of hashed passwords
+      const isPasswordValid = loginDto.password === user.password;
+      
       if (!isPasswordValid) {
+        this.logger.warn(`Invalid password attempt for email: ${loginDto.email}`, 'AuthService');
         throw new UnauthorizedException('Invalid credentials');
       }
 
@@ -83,7 +78,7 @@ export class AuthService {
       return {
         data: {
           access_token,
-          user: user //this.excludePassword(user),
+          user: user
         },
       };
     } catch (error) {
